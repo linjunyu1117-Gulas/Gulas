@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>山海電台 — YouTube 頻道製作工具包</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #21262d;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --orange: #d29922;
+    --purple: #bc8cff;
+    --pink: #ff7b72;
+    --teal: #39d353;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
+
+  /* HEADER */
+  .header { background: linear-gradient(135deg, #0d1b2a 0%, #1a2744 50%, #0d2236 100%); padding: 48px 24px 40px; text-align: center; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 50%, rgba(88,166,255,0.08) 0%, transparent 60%), radial-gradient(ellipse at 70% 30%, rgba(63,185,80,0.06) 0%, transparent 50%); }
+  .header-inner { position: relative; max-width: 800px; margin: 0 auto; }
+  .logo-line { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 12px; }
+  .logo-wave { font-size: 32px; }
+  .header h1 { font-size: 2.4rem; font-weight: 700; letter-spacing: -0.5px; background: linear-gradient(135deg, #58a6ff, #39d353, #58a6ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .header p { color: var(--text2); font-size: 1.05rem; margin-top: 8px; }
+  .stats-bar { display: flex; justify-content: center; gap: 32px; margin-top: 28px; flex-wrap: wrap; }
+  .stat { text-align: center; }
+  .stat-num { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+  .stat-label { font-size: 0.78rem; color: var(--text2); margin-top: 2px; }
+  .badge { display: inline-block; background: rgba(63,185,80,0.15); border: 1px solid rgba(63,185,80,0.4); color: var(--green); border-radius: 20px; padding: 4px 14px; font-size: 0.8rem; margin-top: 16px; }
+
+  /* NAV TABS */
+  .nav { display: flex; gap: 4px; padding: 16px 24px 0; background: var(--bg2); border-bottom: 1px solid var(--border); overflow-x: auto; }
+  .tab-btn { padding: 10px 18px; border: none; background: none; color: var(--text2); cursor: pointer; font-size: 0.9rem; font-weight: 500; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; border-radius: 6px 6px 0 0; }
+  .tab-btn:hover { color: var(--text); background: var(--bg3); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* MAIN */
+  .main { max-width: 1000px; margin: 0 auto; padding: 32px 24px; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* SECTION */
+  .section { margin-bottom: 32px; }
+  .section-title { font-size: 1.1rem; font-weight: 600; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* CARDS */
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+  .card-title { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+  .card-sub { font-size: 0.82rem; color: var(--text2); margin-bottom: 12px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+  /* PROMPT BOX */
+  .prompt-box { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; line-height: 1.7; color: #c9d1d9; position: relative; }
+  .prompt-box.zh { color: #a8d5ff; }
+  .copy-btn { position: absolute; top: 10px; right: 10px; background: var(--bg2); border: 1px solid var(--border); color: var(--text2); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; }
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .copy-btn.copied { border-color: var(--green); color: var(--green); }
+
+  /* TAGS */
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .tag { background: rgba(88,166,255,0.1); border: 1px solid rgba(88,166,255,0.3); color: var(--accent); border-radius: 20px; padding: 3px 12px; font-size: 0.78rem; }
+  .tag.green { background: rgba(63,185,80,0.1); border-color: rgba(63,185,80,0.3); color: var(--green); }
+  .tag.orange { background: rgba(210,153,34,0.1); border-color: rgba(210,153,34,0.3); color: var(--orange); }
+  .tag.purple { background: rgba(188,140,255,0.1); border-color: rgba(188,140,255,0.3); color: var(--purple); }
+
+  /* CHECKLIST */
+  .checklist { list-style: none; }
+  .checklist li { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; display: flex; align-items: flex-start; gap: 10px; }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li::before { content: '○'; color: var(--text2); flex-shrink: 0; cursor: pointer; }
+  .checklist li.done::before { content: '✓'; color: var(--green); }
+
+  /* MARKET DATA */
+  .market-row { display: flex; align-items: center; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .market-rank { font-size: 1.2rem; font-weight: 700; color: var(--text2); width: 32px; }
+  .market-info { flex: 1; }
+  .market-name { font-weight: 600; font-size: 0.95rem; }
+  .market-detail { font-size: 0.8rem; color: var(--text2); margin-top: 2px; }
+  .market-subs { font-weight: 700; color: var(--accent); font-size: 0.95rem; }
+
+  /* INPUT / SELECT */
+  .form-row { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+  select, input[type="text"] { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 8px; font-size: 0.88rem; outline: none; transition: border-color 0.2s; }
+  select:focus, input[type="text"]:focus { border-color: var(--accent); }
+  .gen-btn { background: var(--accent); color: #0d1117; border: none; padding: 9px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.88rem; transition: opacity 0.2s; }
+  .gen-btn:hover { opacity: 0.85; }
+
+  /* SEO OUTPUT */
+  .seo-output { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 16px; font-size: 0.88rem; line-height: 1.8; white-space: pre-wrap; color: #c9d1d9; }
+
+  /* OPPORTUNITY BOX */
+  .opportunity { background: linear-gradient(135deg, rgba(63,185,80,0.08), rgba(88,166,255,0.05)); border: 1px solid rgba(63,185,80,0.3); border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+  .opportunity h3 { color: var(--green); font-size: 1rem; margin-bottom: 10px; }
+  .opportunity p { font-size: 0.88rem; color: var(--text2); line-height: 1.7; }
+
+  /* PROGRESS */
+  .progress-bar { height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; margin-top: 6px; }
+  .progress-fill { height: 100%; border-radius: 3px; transition: width 0.5s; }
+
+  /* RESPONSIVE */
+  @media (max-width: 640px) {
+    .grid2, .grid3 { grid-template-columns: 1fr; }
+    .header h1 { font-size: 1.8rem; }
+    .stats-bar { gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="logo-line">
+      <span class="logo-wave">🏔️</span>
+      <h1>山海電台</h1>
+      <span class="logo-wave">🌊</span>
+    </div>
+    <p>Taiwan Indie Folk · YouTube 頻道製作全工具包</p>
+    <div class="stats-bar">
+      <div class="stat">
+        <div class="stat-num">15.7M</div>
+        <div class="stat-label">Lofi Girl 訂閱（競品）</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">25億</div>
+        <div class="stat-label">Lofi Girl 總播放</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">0.03%</div>
+        <div class="stat-label">競品 2026 月成長率</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">🔵</div>
+        <div class="stat-label">台灣自然系 = 空白市場</div>
+      </div>
+    </div>
+    <div class="badge">✦ 市場切入點：台灣山海自然系 Indie Folk — 競爭者幾乎為零</div>
+  </div>
+</div>
+
+<div class="nav">
+  <button class="tab-btn active" onclick="switchTab('strategy')">📊 市場策略</button>
+  <button class="tab-btn" onclick="switchTab('suno')">🎵 Suno 音樂 Prompt</button>
+  <button class="tab-btn" onclick="switchTab('visual')">🎨 視覺 Prompt</button>
+  <button class="tab-btn" onclick="switchTab('seo')">📝 YouTube SEO</button>
+  <button class="tab-btn" onclick="switchTab('checklist')">✅ 製作清單</button>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 1: STRATEGY -->
+<!-- ============================================================ -->
+<div id="tab-strategy" class="tab-panel active main">
+
+  <div class="opportunity">
+    <h3>🎯 2026 市場機會分析</h3>
+    <p>Lofi Girl 在全球稱霸但成長停滯（月增 0.03%）。台灣自然系頻道在 YouTube 幾乎是空白：沒有任何頻道系統性地結合<strong style="color:#e6edf3">台灣山海風景 + Indie Folk 音樂 + 長時間播放清單</strong>。「山海之間 OceanHighlan」方向正確，但規模還小——代表現在進場是最好時機。</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🏆 全球競品排行</div>
+    <div class="card">
+      <div class="market-row">
+        <div class="market-rank">#1</div>
+        <div class="market-info">
+          <div class="market-name">Lofi Girl</div>
+          <div class="market-detail">動漫女孩讀書 · 24/7 直播 · 法國 · 2017年起</div>
+        </div>
+        <div class="market-subs">15.7M 訂閱</div>
+      </div>
+      <div class="market-row">
+        <div class="market-rank">#2</div>
+        <div class="market-info">
+          <div class="market-name">Chillhop Music</div>
+          <div class="market-detail">Jazz Hop · 插畫風 · 荷蘭</div>
+        </div>
+        <div class="market-subs">~4M 訂閱</div>
+      </div>
+      <div class="market-row">
+        <div class="market-rank">#3</div>
+        <div class="market-info">
+          <div class="market-name">Lofi Vibes</div>
+          <div class="market-detail">輕鬆 Chill Beats</div>
+        </div>
+        <div class="market-subs">158K 訂閱</div>
+      </div>
+      <div class="market-row">
+        <div class="market-rank">🆕</div>
+        <div class="market-info">
+          <div class="market-name" style="color:var(--green)">山海電台（你的定位）</div>
+          <div class="market-detail">台灣自然風景 + Indie Folk + 亞洲療癒美學</div>
+        </div>
+        <div class="market-subs" style="color:var(--green)">藍海市場</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🗺️ 差異化定位</div>
+    <div class="grid3">
+      <div class="card">
+        <div class="card-title">🎵 音樂風格</div>
+        <div class="card-sub">模仿爆款 → 建立自己</div>
+        <div class="tags">
+          <span class="tag">Indie Folk</span>
+          <span class="tag green">吉他撥弦</span>
+          <span class="tag orange">環境音效</span>
+          <span class="tag purple">空靈女聲</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🏔️ 視覺識別</div>
+        <div class="card-sub">固定品牌視覺</div>
+        <div class="tags">
+          <span class="tag">太魯閣峽谷</span>
+          <span class="tag green">台東海岸</span>
+          <span class="tag orange">阿里山晨霧</span>
+          <span class="tag purple">宜蘭稻田</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">⏱️ 影片格式</div>
+        <div class="card-sub">仿 Lofi Girl 長時直播</div>
+        <div class="tags">
+          <span class="tag">1~3 小時影片</span>
+          <span class="tag green">24/7 直播</span>
+          <span class="tag orange">季節主題</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📅 前三個月行動計畫</div>
+    <div class="card">
+      <div class="market-row">
+        <div class="market-rank" style="color:var(--accent)">M1</div>
+        <div class="market-info">
+          <div class="market-name">模仿期 — 驗證格式</div>
+          <div class="market-detail">製作 3 支 1 小時影片，模仿 Lofi Girl 結構但換成台灣主題。測試哪個場景點閱最高。</div>
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:33%;background:var(--accent)"></div></div>
+      <div class="market-row" style="margin-top:12px">
+        <div class="market-rank" style="color:var(--orange)">M2</div>
+        <div class="market-info">
+          <div class="market-name">優化期 — 建立識別</div>
+          <div class="market-detail">根據數據找出爆款場景，製作系列影片。設計固定頻道 logo 和封面模板。</div>
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:66%;background:var(--orange)"></div></div>
+      <div class="market-row" style="margin-top:12px">
+        <div class="market-rank" style="color:var(--green)">M3</div>
+        <div class="market-info">
+          <div class="market-name">擴張期 — 開啟直播</div>
+          <div class="market-detail">架設 24/7 直播電台。開始跨平台推廣（Instagram Reels、Shorts）。</div>
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:100%;background:var(--green)"></div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 2: SUNO -->
+<!-- ============================================================ -->
+<div id="tab-suno" class="tab-panel main">
+
+  <div class="section">
+    <div class="section-title">🎵 Suno AI — 音樂生成 Prompt（直接複製使用）</div>
+
+    <div class="card">
+      <div class="card-title">🏔️ 影片 1：太魯閣峽谷晨光</div>
+      <div class="card-sub">適合：晨間工作、冥想、療癒放鬆</div>
+      <div class="prompt-box" id="suno1">
+indie folk, fingerpicked acoustic guitar, 72 BPM, meditative morning mood, soft breathy female vocal humming (no lyrics), Taiwan mountain forest ambience, birds chirping layered underneath, warm lo-fi tape quality, intimate and spacious, pentatonic melody, reverb-drenched strings, 3-minute loop-friendly structure
+      <button class="copy-btn" onclick="copyText('suno1', this)">複製</button></div>
+      <div class="tags">
+        <span class="tag">Suno Custom Mode</span>
+        <span class="tag green">72 BPM</span>
+        <span class="tag orange">無歌詞 Instrumental</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🌊 影片 2：台東海岸黃昏</div>
+      <div class="card-sub">適合：下班放鬆、Lo-fi Study</div>
+      <div class="prompt-box" id="suno2">
+Taiwan indie folk, gentle ocean wave rhythm, 80 BPM, bittersweet sunset atmosphere, fingerstyle nylon guitar, soft male whisper vocal with minimal syllables, sea breeze texture, mellow bass undertone, nostalgia and longing, warm amber tone, slightly imperfect lo-fi recording feel, Taiwanese folk melody influence
+      <button class="copy-btn" onclick="copyText('suno2', this)">複製</button></div>
+      <div class="tags">
+        <span class="tag">Suno Custom Mode</span>
+        <span class="tag green">80 BPM</span>
+        <span class="tag purple">Lo-fi Folk</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🌿 影片 3：宜蘭稻田雨聲</div>
+      <div class="card-sub">適合：睡前、深度工作、1~3小時長播</div>
+      <div class="prompt-box" id="suno3">
+ambient indie folk, 64 BPM, soft rain and rural Taiwan countryside, plucked koto-inspired guitar melody, light xylophone accents, slow-building pad texture, no percussion, whispered female vocal chant (wordless), dreamy and melancholic, high reverb, nature sound design layered (cicadas at night), meditative loop structure for extended listening
+      <button class="copy-btn" onclick="copyText('suno3', this)">複製</button></div>
+      <div class="tags">
+        <span class="tag">Suno Custom Mode</span>
+        <span class="tag green">64 BPM</span>
+        <span class="tag orange">Ambient Loop</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">❄️ 影片 4：合歡山冬雪</div>
+      <div class="card-sub">適合：冬季特輯、節日限定</div>
+      <div class="prompt-box" id="suno4">
+cinematic indie folk, 68 BPM, cold mountain winter Taiwan, solo acoustic guitar with sparse piano chords, light choral breath vocal (no lyrics), expansive reverb like mountain echo, crisp cold air atmosphere, occasional wind sound, minimalist post-folk production, hopeful but lonely mood, wide stereo space
+      <button class="copy-btn" onclick="copyText('suno4', this)">複製</button></div>
+      <div class="tags">
+        <span class="tag">Suno Custom Mode</span>
+        <span class="tag green">68 BPM</span>
+        <span class="tag purple">Cinematic Folk</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section">
+    <div class="section-title">⚙️ Suno 操作步驟</div>
+    <div class="card">
+      <ol style="padding-left:20px;line-height:2;font-size:0.9rem;color:var(--text2)">
+        <li>開啟 <strong style="color:var(--accent)">suno.com</strong> → 點選 <strong style="color:var(--text)">Create</strong></li>
+        <li>切換到 <strong style="color:var(--green)">Custom Mode</strong>（右上角切換）</li>
+        <li>在 <strong style="color:var(--text)">Style of Music</strong> 欄位貼上上方 Prompt</li>
+        <li>Title 填入：<code style="background:var(--bg3);padding:2px 6px;border-radius:4px">Taiwan Mountain Folk Vol.1</code></li>
+        <li>Lyrics 選 <strong style="color:var(--green)">Instrumental</strong></li>
+        <li>點 <strong style="color:var(--accent)">Generate</strong>，生成 2 個版本，選最佳</li>
+        <li>下載 MP3（需付費方案）或用 <strong style="color:var(--orange)">Extend</strong> 延長到 3 分鐘</li>
+      </ol>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 3: VISUAL -->
+<!-- ============================================================ -->
+<div id="tab-visual" class="tab-panel main">
+
+  <div class="section">
+    <div class="section-title">🎨 GPT (DALL-E 3) — 縮圖 & 封面 Prompt</div>
+
+    <div class="card">
+      <div class="card-title">封面圖 1：太魯閣峽谷（頻道主視覺）</div>
+      <div class="prompt-box" id="dalle1">
+A serene Taroko Gorge at golden hour, Taiwan, steep marble canyon walls with lush green vegetation, a clear turquoise river flowing through, warm sunlight filtering through morning mist, no people, photorealistic landscape photography style, 16:9 widescreen aspect ratio, cinematic color grading with warm amber and deep teal tones, ultra-detailed, National Geographic quality
+      <button class="copy-btn" onclick="copyText('dalle1', this)">複製</button></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">封面圖 2：台東海岸落日（Lo-fi 插畫風）</div>
+      <div class="prompt-box" id="dalle2">
+A peaceful Taiwan east coast beach at sunset, illustrated in a soft Studio Ghibli-inspired watercolor style, gentle ocean waves, warm orange and purple sky gradient, silhouette of a small fishing boat in the distance, a lone wooden bench on the shore, lo-fi aesthetic, dreamy and melancholic mood, for YouTube thumbnail, clean composition with space for text overlay at top
+      <button class="copy-btn" onclick="copyText('dalle2', this)">複製</button></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">封面圖 3：阿里山茶園晨霧（冥想系）</div>
+      <div class="prompt-box" id="dalle3">
+Alishan mountain tea plantation in morning mist, Taiwan, rows of green tea bushes stretching into the misty mountains, soft diffused morning light, pale blue and green tones, a traditional Taiwanese tea house partially visible through the fog, ethereal and meditative atmosphere, fine art photography style, minimalist composition, cinematic widescreen
+      <button class="copy-btn" onclick="copyText('dalle3', this)">複製</button></div>
+    </div>
+
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎬 Gemini — 免費影片素材搜尋指令</div>
+
+    <div class="card">
+      <div class="card-title">指令 1：找 Pexels/Pixabay 台灣自然影片</div>
+      <div class="prompt-box zh" id="gemini1">
+幫我在 Pexels.com 和 Pixabay.com 上找以下主題的免費授權影片（CC0 授權），每個主題找 3 個連結：
+1. 台灣太魯閣峽谷 (Taroko Gorge Taiwan)
+2. 台東海岸夕陽 (Taiwan east coast sunset)
+3. 阿里山晨霧茶園 (Alishan tea plantation mist)
+4. 宜蘭田園風景 (Yilan rural countryside Taiwan)
+要求：4K 畫質優先，至少 30 秒，水平橫向構圖
+      <button class="copy-btn" onclick="copyText('gemini1', this)">複製</button></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">指令 2：找適合 Loop 的環境音效</div>
+      <div class="prompt-box zh" id="gemini2">
+在 freesound.org 幫我找以下台灣自然環境音效（免費 CC0 授權），每項給我直接下載連結：
+1. 台灣山林鳥叫聲（台灣藍鵲、五色鳥）
+2. 山澗流水聲（可 loop）
+3. 台灣夜晚蟬鳴聲
+4. 海浪拍打礁石聲（太平洋）
+5. 雨打芭蕉葉聲
+格式：WAV 或 FLAC，3分鐘以上，適合做影片背景音
+      <button class="copy-btn" onclick="copyText('gemini2', this)">複製</button></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">指令 3：競品分析</div>
+      <div class="prompt-box zh" id="gemini3">
+幫我分析 YouTube 上這幾個頻道最高點閱率的影片：
+1. 搜尋「Taiwan nature music」前 5 名影片
+2. 搜尋「lofi folk Asia」前 5 名影片
+3. 搜尋「山海之間 OceanHighlan」前 3 名影片
+
+針對每支影片告訴我：
+- 影片標題
+- 縮圖風格描述
+- 影片長度
+- 估計播放次數
+- 評論中觀眾最常提到什麼感受
+      <button class="copy-btn" onclick="copyText('gemini3', this)">複製</button></div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 4: SEO -->
+<!-- ============================================================ -->
+<div id="tab-seo" class="tab-panel main">
+
+  <div class="section">
+    <div class="section-title">📝 YouTube SEO 模板生成器</div>
+
+    <div class="card">
+      <div class="card-title">選擇場景，自動產生標題+描述+標籤</div>
+      <div class="form-row">
+        <select id="scene-select">
+          <option value="taroko">🏔️ 太魯閣峽谷晨光</option>
+          <option value="coast">🌊 台東海岸黃昏</option>
+          <option value="alishan">🌿 阿里山晨霧</option>
+          <option value="yilan">🌾 宜蘭稻田雨聲</option>
+          <option value="hehuanshan">❄️ 合歡山冬雪</option>
+        </select>
+        <select id="duration-select">
+          <option value="1">1 小時版</option>
+          <option value="2">2 小時版</option>
+          <option value="3">3 小時版</option>
+        </select>
+        <button class="gen-btn" onclick="generateSEO()">生成模板</button>
+      </div>
+      <div class="seo-output" id="seo-output">← 點選上方「生成模板」按鈕</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🏷️ 通用標籤庫（每支影片都加）</div>
+    <div class="card">
+      <div class="tags" style="gap:8px">
+        <span class="tag">台灣音樂</span><span class="tag">indie folk</span><span class="tag">lofi</span>
+        <span class="tag green">Taiwan nature</span><span class="tag green">台灣自然</span>
+        <span class="tag orange">療癒音樂</span><span class="tag orange">讀書音樂</span><span class="tag orange">工作音樂</span>
+        <span class="tag purple">ambient music</span><span class="tag purple">chill music</span>
+        <span class="tag">山海之間</span><span class="tag">folk music</span>
+        <span class="tag green">relax music</span><span class="tag green">study music</span>
+        <span class="tag orange">台灣風景</span><span class="tag purple">acoustic guitar</span>
+      </div>
+      <button class="copy-btn" style="position:static;margin-top:12px;display:inline-block" onclick="copyTagList()">複製全部標籤</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 5: CHECKLIST -->
+<!-- ============================================================ -->
+<div id="tab-checklist" class="tab-panel main">
+
+  <div class="section">
+    <div class="section-title">✅ 第一支影片製作清單</div>
+    <div class="card">
+      <div style="margin-bottom:8px;font-size:0.8rem;color:var(--text2)">點擊項目打勾</div>
+      <ul class="checklist" id="checklist">
+        <li onclick="toggleCheck(this)"><strong>【音樂】</strong> 打開 suno.com → Custom Mode</li>
+        <li onclick="toggleCheck(this)"><strong>【音樂】</strong> 貼上太魯閣場景的 Suno Prompt，生成 3 個版本</li>
+        <li onclick="toggleCheck(this)"><strong>【音樂】</strong> 選最好的版本，用 Extend 延長到 3 分鐘</li>
+        <li onclick="toggleCheck(this)"><strong>【音樂】</strong> 下載音樂 MP3 檔</li>
+        <li onclick="toggleCheck(this)"><strong>【影片】</strong> 去 Pexels.com 搜尋「Taroko Gorge」下載 4K 影片</li>
+        <li onclick="toggleCheck(this)"><strong>【影片】</strong> 下載至少 3 個角度的場景影片（共 5~10 分鐘素材）</li>
+        <li onclick="toggleCheck(this)"><strong>【音效】</strong> 去 freesound.org 下載鳥叫聲 + 流水聲（CC0 授權）</li>
+        <li onclick="toggleCheck(this)"><strong>【剪輯】</strong> 開啟 DaVinci Resolve（免費）或 CapCut</li>
+        <li onclick="toggleCheck(this)"><strong>【剪輯】</strong> 導入影片 → 設定時間軸為 1 小時，影片片段循環播放</li>
+        <li onclick="toggleCheck(this)"><strong>【剪輯】</strong> 音樂軌道放底層，音效軌道疊加，調整音量比例 (音樂 70% : 音效 30%)</li>
+        <li onclick="toggleCheck(this)"><strong>【縮圖】</strong> 打開 Canva，使用 1280×720 尺寸</li>
+        <li onclick="toggleCheck(this)"><strong>【縮圖】</strong> 背景用 DALL-E 生成的太魯閣圖，加上標題文字</li>
+        <li onclick="toggleCheck(this)"><strong>【縮圖】</strong> 字體：粗體白字 + 黑色陰影，左下角放頻道 logo</li>
+        <li onclick="toggleCheck(this)"><strong>【上傳】</strong> 打開 YouTube Studio → 上傳影片</li>
+        <li onclick="toggleCheck(this)"><strong>【上傳】</strong> 貼上 SEO 模板（標題 + 描述 + 標籤）</li>
+        <li onclick="toggleCheck(this)"><strong>【上傳】</strong> 上傳自訂縮圖</li>
+        <li onclick="toggleCheck(this)"><strong>【上傳】</strong> 分類設定為「音樂」，語言設定為「中文（台灣）」</li>
+        <li onclick="toggleCheck(this)"><strong>【發布】</strong> 設定預約發布（建議週五晚上 8 點）</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🛠️ 免費工具推薦</div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-title">剪輯工具</div>
+        <ul style="padding-left:16px;line-height:2.2;font-size:0.88rem;color:var(--text2)">
+          <li><strong style="color:var(--text)">DaVinci Resolve</strong> — 專業免費，最推薦</li>
+          <li><strong style="color:var(--text)">CapCut</strong> — 手機操作簡單</li>
+          <li><strong style="color:var(--text)">Kdenlive</strong> — Linux 開源免費</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title">縮圖 & 設計</div>
+        <ul style="padding-left:16px;line-height:2.2;font-size:0.88rem;color:var(--text2)">
+          <li><strong style="color:var(--text)">Canva</strong> — 免費，模板多</li>
+          <li><strong style="color:var(--text)">Adobe Express</strong> — 免費版夠用</li>
+          <li><strong style="color:var(--text)">DALL-E (ChatGPT)</strong> — 生成背景圖</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title">音樂生成</div>
+        <ul style="padding-left:16px;line-height:2.2;font-size:0.88rem;color:var(--text2)">
+          <li><strong style="color:var(--text)">Suno.com</strong> — 最佳 AI 音樂生成</li>
+          <li><strong style="color:var(--text)">Udio.com</strong> — 備用選項</li>
+          <li><strong style="color:var(--text)">Pixabay Music</strong> — 免費授權音樂庫</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title">影片素材</div>
+        <ul style="padding-left:16px;line-height:2.2;font-size:0.88rem;color:var(--text2)">
+          <li><strong style="color:var(--text)">Pexels.com</strong> — CC0 免費 4K 影片</li>
+          <li><strong style="color:var(--text)">Pixabay.com</strong> — 免費授權</li>
+          <li><strong style="color:var(--text)">Mixkit.co</strong> — 高品質免費影片</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function switchTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function copyText(id, btn) {
+  const el = document.getElementById(id);
+  const text = el.childNodes[0].textContent.trim();
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '已複製 ✓';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '複製'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function copyTagList() {
+  const tags = '台灣音樂, indie folk, lofi, Taiwan nature, 台灣自然, 療癒音樂, 讀書音樂, 工作音樂, ambient music, chill music, 山海之間, folk music, relax music, study music, 台灣風景, acoustic guitar, lofi music, Taiwan folk, 自然音樂, indie music';
+  navigator.clipboard.writeText(tags).then(() => alert('標籤已複製！'));
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('done');
+}
+
+const SEO_DATA = {
+  taroko: {
+    title_zh: '太魯閣峽谷晨光',
+    title_en: 'Taroko Gorge Morning',
+    desc_scene: '台灣太魯閣峽谷——清晨的陽光穿透大理石峽壁，流水聲與鳥鳴聲交織，讓你的心回到最純粹的狀態。',
+    emoji: '🏔️'
+  },
+  coast: {
+    title_zh: '台東海岸黃昏',
+    title_en: 'Taitung Coast Sunset',
+    desc_scene: '台灣東海岸的黃昏——太平洋的海浪緩緩拍打礁石，溫柔的夕陽光線染紅了海面，時間在這裡慢下來。',
+    emoji: '🌊'
+  },
+  alishan: {
+    title_zh: '阿里山晨霧',
+    title_en: 'Alishan Morning Mist',
+    desc_scene: '阿里山茶園的清晨——一層薄薄的晨霧覆蓋著翠綠的茶樹，空氣中飄著淡淡的茶香與松木氣息。',
+    emoji: '🌿'
+  },
+  yilan: {
+    title_zh: '宜蘭稻田雨聲',
+    title_en: 'Yilan Rice Field Rain',
+    desc_scene: '宜蘭的田野——雨水打在稻葉上發出細碎的聲響，遠山上的雲霧緩緩流動，整個世界靜謐而柔軟。',
+    emoji: '🌾'
+  },
+  hehuanshan: {
+    title_zh: '合歡山冬雪',
+    title_en: 'Hehuanshan Winter Snow',
+    desc_scene: '合歡山的冬天——白雪靜靜覆蓋著高山草原，冷冽的空氣與遼闊的天際線讓人感到渺小又自由。',
+    emoji: '❄️'
+  }
+};
+
+function generateSEO() {
+  const scene = document.getElementById('scene-select').value;
+  const dur = document.getElementById('duration-select').value;
+  const d = SEO_DATA[scene];
+  const hours = parseInt(dur);
+
+  const title = `${d.emoji} ${d.title_zh} ${hours}小時 — 台灣山海 Indie Folk｜讀書・工作・療癒放鬆音樂`;
+
+  const desc = `${d.desc_scene}
+
+🎵 ${hours} 小時不間斷的台灣 Indie Folk 音樂，專為深度工作、讀書專注、或純粹放鬆而設計。
+
+──────────────────────────
+⏱ 時間軸
+00:00 — 開場 · ${d.title_zh}
+30:00 — 中段 · 高原靜謐時光
+${hours > 1 ? `01:00:00 — 後段 · 深夜山林\n` : ''}${hours > 2 ? `02:00:00 — 尾聲 · 晨光將至\n` : ''}──────────────────────────
+🏔️ 關於山海電台
+我們記錄台灣最美的山林與海岸風景，配上手工挑選的 Indie Folk 音樂，為你打造一個可以喘息的聲音空間。
+新影片每週發布 · 訂閱開啟通知不錯過
+
+🎧 最佳聆聽方式：耳機 · 音量 50~70% · 閉眼感受
+──────────────────────────
+#台灣音樂 #indiefolk #lofi #療癒音樂 #讀書音樂 #${d.title_en.replace(/ /g,'')} #Taiwan`;
+
+  const tags = `台灣音樂, indie folk, lofi, ${d.title_zh}, ${d.title_en}, 療癒音樂, 讀書音樂, 工作音樂, ambient music, chill music, Taiwan nature, 台灣自然風景, folk music, relax music, study music, acoustic guitar, ${hours}小時音樂, lofi folk, Taiwan folk music, 山海電台`;
+
+  document.getElementById('seo-output').textContent =
+    `【標題】\n${title}\n\n【描述】\n${desc}\n\n【標籤】\n${tags}`;
+}
+
+// Generate default on load
+generateSEO();
+</script>
+
+</body>
+</html>
