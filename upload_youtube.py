@@ -13,29 +13,30 @@ SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
 CLIENT_SECRETS = "/home/user/Gulas/client_secrets.json"
 TOKEN_FILE     = "/home/user/Gulas/token.pickle"
 
-VIDEO_FILE  = "/home/user/Gulas/assets/output/taiwan_mountain_radio_vol1.mp4"
+VIDEO_FILE  = "/home/user/Gulas/assets/output/shanshui_piano_vol1.mp4"
 THUMB_FILE  = "/home/user/Gulas/assets/thumbnail/thumbnail_vol1.png"
 
-TITLE = "🏔️ 太魯閣峽谷晨光 1小時 — 台灣山海 Indie Folk｜讀書・工作・療癒放鬆音樂"
+TITLE = "🎹 山水鋼琴 1小時 — 水墨山水・鋼琴冥想音樂｜讀書・工作・療癒放鬆"
 
-DESCRIPTION = """太魯閣峽谷——清晨的陽光穿透大理石峽壁，流水聲與鳥鳴聲交織，讓你的心回到最純粹的狀態。
+DESCRIPTION = """水墨山水，鋼琴輕鳴。
+讓這片靜謐的山景與純粹的鋼琴聲，帶你回到內心最寧靜的角落。
 
-🎵 1 小時不間斷的台灣 Indie Folk 音樂，專為深度工作、讀書專注、或純粹放鬆而設計。
+🎵 1 小時不間斷的山水鋼琴音樂，專為深度工作、讀書專注、冥想或純粹放鬆而設計。
 
 ──────────────────────────
 🏔️ 關於山海電台
-我們記錄台灣最美的山林與海岸風景，配上手工挑選的 Indie Folk 音樂，為你打造一個可以喘息的聲音空間。
+我們記錄台灣最美的山林與海岸風景，配上手工製作的環境音樂，為你打造一個可以喘息的聲音空間。
 新影片每週發布 · 訂閱開啟通知不錯過
 
 🎧 最佳聆聽方式：耳機 · 音量 50~70% · 閉眼感受
 ──────────────────────────
-#台灣音樂 #indiefolk #lofi #療癒音樂 #讀書音樂 #TarokoGorge #Taiwan"""
+#山水鋼琴 #鋼琴音樂 #水墨 #療癒音樂 #讀書音樂 #冥想音樂 #pianomusic #ambient #lofi #Taiwan"""
 
 TAGS = [
-    "台灣音樂", "indie folk", "lofi", "太魯閣峽谷", "Taroko Gorge",
-    "療癒音樂", "讀書音樂", "工作音樂", "ambient music", "chill music",
-    "Taiwan nature", "台灣自然風景", "folk music", "relax music",
-    "study music", "acoustic guitar", "1小時音樂", "山海電台"
+    "山水鋼琴", "鋼琴音樂", "piano music", "lofi", "水墨山水",
+    "療癒音樂", "讀書音樂", "工作音樂", "ambient music", "冥想音樂",
+    "meditation music", "study music", "relax music", "1小時音樂",
+    "Taiwan nature", "台灣自然風景", "山海電台", "shanshui"
 ]
 
 def get_credentials():
