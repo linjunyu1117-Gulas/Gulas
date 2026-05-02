@@ -107,6 +107,21 @@
   .progress-bar { height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; margin-top: 6px; }
   .progress-fill { height: 100%; border-radius: 3px; transition: width 0.5s; }
 
+  /* ASSETS */
+  .asset-row { display:flex; align-items:center; gap:14px; padding:12px 0; border-bottom:1px solid var(--border); }
+  .asset-row:last-child { border-bottom:none; }
+  .asset-icon { font-size:1.5rem; flex-shrink:0; width:36px; text-align:center; }
+  .asset-info { flex:1; }
+  .asset-name { font-weight:600; font-size:0.9rem; color:var(--text); }
+  .asset-meta { font-size:0.78rem; color:var(--text2); margin-top:2px; }
+  .asset-btn { background:var(--accent); color:#0d1117; padding:6px 14px; border-radius:6px; text-decoration:none; font-size:0.8rem; font-weight:600; flex-shrink:0; transition:opacity 0.2s; }
+  .asset-btn:hover { opacity:0.8; }
+  .asset-btn-outline { background:var(--bg3); border:1px solid var(--border); color:var(--text2); padding:6px 14px; border-radius:6px; text-decoration:none; font-size:0.8rem; transition:all 0.2s; }
+  .asset-btn-outline:hover { border-color:var(--accent); color:var(--accent); }
+  .asset-link-card { display:block; background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:16px; text-decoration:none; transition:border-color 0.2s; }
+  .asset-link-card:hover { border-color:var(--accent); }
+  .asset-link-card .asset-name { margin-top:8px; }
+
   /* RESPONSIVE */
   @media (max-width: 640px) {
     .grid2, .grid3 { grid-template-columns: 1fr; }
@@ -747,22 +762,6 @@ Alishan mountain tea plantation in morning mist, Taiwan, rows of green tea bushe
   </div>
 
 </div>
-
-<style>
-  .asset-row { display:flex; align-items:center; gap:14px; padding:12px 0; border-bottom:1px solid var(--border); }
-  .asset-row:last-child { border-bottom:none; }
-  .asset-icon { font-size:1.5rem; flex-shrink:0; width:36px; text-align:center; }
-  .asset-info { flex:1; }
-  .asset-name { font-weight:600; font-size:0.9rem; color:var(--text); }
-  .asset-meta { font-size:0.78rem; color:var(--text2); margin-top:2px; }
-  .asset-btn { background:var(--accent); color:#0d1117; padding:6px 14px; border-radius:6px; text-decoration:none; font-size:0.8rem; font-weight:600; flex-shrink:0; transition:opacity 0.2s; }
-  .asset-btn:hover { opacity:0.8; }
-  .asset-btn-outline { background:var(--bg3); border:1px solid var(--border); color:var(--text2); padding:6px 14px; border-radius:6px; text-decoration:none; font-size:0.8rem; transition:all 0.2s; }
-  .asset-btn-outline:hover { border-color:var(--accent); color:var(--accent); }
-  .asset-link-card { display:block; background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:16px; text-decoration:none; transition:border-color 0.2s; }
-  .asset-link-card:hover { border-color:var(--accent); }
-  .asset-link-card .asset-name { margin-top:8px; }
-</style>
 
 <script>
 function switchTab(name) {
